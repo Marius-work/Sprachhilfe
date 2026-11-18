@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sprachhilfe</title>
+<style>
+:root{--bg:#e9eef2;--sf:#fff;--tx:#14232e;--mu:#5b6b77;--ac:#0f6b7a;--act:#fff;--sp:#f2a900;--spt:#2a1c00;--bd:#c4d0d8;--dn:#b3261e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a21;--sf:#1a2a34;--tx:#eaf2f6;--mu:#9fb2be;--ac:#4cc3d4;--act:#05252b;--sp:#f2b632;--spt:#2a1c00;--bd:#34495a;--dn:#ff8a80}}
+:root[data-theme="dark"]{--bg:#0f1a21;--sf:#1a2a34;--tx:#eaf2f6;--mu:#9fb2be;--ac:#4cc3d4;--act:#05252b;--sp:#f2b632;--spt:#2a1c00;--bd:#34495a;--dn:#ff8a80}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font-family:"Atkinson Hyperlegible","Segoe UI",Verdana,system-ui,sans-serif;display:flex;flex-direction:column;gap:10px;padding:10px 14px;overflow:hidden;-webkit-user-select:none;user-select:none}
+button{font:inherit;color:inherit;cursor:pointer;border:2px solid var(--bd);background:var(--sf);border-radius:18px;touch-action:manipulation}
+button:focus-visible,textarea:focus-visible,input:focus-visible,select:focus-visible{outline:4px solid var(--ac);outline-offset:2px}
+.top{display:flex;align-items:center;gap:10px}
+.top h1{font-size:22px;margin:0;flex:1}
+.top button{min-height:52px;padding:0 18px;font-size:20px}
+.top button.on{background:var(--ac);color:var(--act);border-color:var(--ac)}
+.write{display:flex;gap:10px;align-items:stretch}
+#txt{flex:1;min-height:130px;height:20vh;font:inherit;font-size:clamp(30px,5vw,48px);line-height:1.2;padding:12px 18px;border-radius:22px;border:3px solid var(--ac);background:var(--sf);color:var(--tx);resize:none;-webkit-user-select:text;user-select:text}
+.side{display:flex;flex-direction:column;gap:8px;width:min(34vw,260px)}
+.side button{flex:1;font-size:22px;font-weight:700}
+#say{background:var(--sp);color:var(--spt);border-color:var(--sp);font-size:30px}
+.row{display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;padding:4px 2px 8px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.row>*{flex:0 0 auto}
+#sug{min-height:64px}
+.chip{min-height:52px;padding:0 20px;font-size:24px;border-radius:30px;border-color:var(--ac);font-weight:600}
+.chip.ph{font-weight:400}
+.hint{color:var(--mu);font-size:18px;align-self:center;padding-left:6px}
+#cats .cat{min-width:150px;height:104px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:20px;font-weight:700;padding:6px 14px}
+#cats .cat span{font-size:40px;line-height:1}
+.cat.sel{background:var(--ac);color:var(--act);border-color:var(--ac)}
+#phr{flex:1;min-height:150px;align-items:stretch}
+.p{width:min(44vw,340px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px;font-size:clamp(22px,3vw,30px);font-weight:700;text-align:center;line-height:1.2;overflow:hidden}
+.p span{font-size:54px;line-height:1}
+.p:active,.cat:active{transform:scale(.97)}
+button{-webkit-touch-callout:none}
+.lift{position:relative;z-index:5;box-shadow:0 12px 32px rgba(0,0,0,.4);border-color:var(--sp)!important;border-style:solid!important;transition:none}
+.p.talk{background:var(--sp);color:var(--spt);border-color:var(--sp)}
+.edit .p,.edit .cat{border-style:dashed;border-color:var(--ac)}
+.add{border-style:dashed;border-color:var(--ac);color:var(--ac);font-size:44px;font-weight:700;display:none;align-items:center;justify-content:center}
+.edit .add{display:flex}
+#cats .add{min-width:100px;height:104px}
+#phr .add{width:160px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+.ov.show{display:flex}
+.box{background:var(--sf);border-radius:24px;padding:22px;width:min(640px,100%);max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:14px;-webkit-user-select:text;user-select:text}
+.box h2{margin:0;font-size:26px}
+.box label{display:flex;flex-direction:column;gap:6px;font-size:18px;color:var(--mu)}
+.box input,.box select,.box textarea{font:inherit;font-size:24px;padding:12px;border-radius:14px;border:2px solid var(--bd);background:var(--bg);color:var(--tx)}
+.box input[type=range]{padding:0;width:100%;accent-color:var(--ac)}
+.er{display:flex;gap:10px}
+.er input:first-child{width:110px;text-align:center;font-size:34px}
+.er input:last-child{flex:1}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+.btns button{min-height:56px;padding:0 20px;font-size:20px;font-weight:700}
+.btns .pri{background:var(--ac);color:var(--act);border-color:var(--ac)}
+.btns .del{color:var(--dn);border-color:var(--dn)}
+@media (max-width:700px){.side{width:40vw}#say{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>Sprachhilfe</h1>
+  <button id="bEdit" aria-pressed="false">✏️ Bearbeiten</button>
+  <button id="bSet">⚙️ Einstellungen</button>
+</div>
+
+<div class="write">
+  <textarea id="txt" placeholder="Hier tippen …" autocomplete="off" autocapitalize="sentences" spellcheck="false"></textarea>
+  <div class="side">
+    <button id="say">🔊 Sprechen</button>
+    <div class="er" style="gap:8px;flex:1">
+      <button id="clr" style="flex:1;font-size:20px;font-weight:700">🗑 Löschen</button>
+      <button id="keep" style="flex:1;font-size:20px;font-weight:700">⭐ Merken</button>
+    </div>
+  </div>
+</div>
+
+<div id="sug" class="row" aria-label="Wortvorschläge"></div>
+<div id="cats" class="row" aria-label="Kategorien"></div>
+<div id="phr" class="row" aria-label="Sätze"></div>
+
+<div id="ovE" class="ov"><div class="box" id="boxE"></div></div>
+<div id="ovS" class="ov"><div class="box" id="boxS"></div></div>
+
+<script>
+const W="ich du er sie es wir ihr und oder aber nicht ja nein bitte danke Danke Bitte Hallo Hilfe Schmerzen Schmerz Durst Hunger Wasser Tee Kaffee Saft Milch Brot Suppe Essen Trinken Toilette Bett Stuhl Fenster Tür Licht Fernseher Radio Telefon Brille Medikament Medikamente Tabletten Arzt Ärztin Schwester Pfleger Tochter Sohn Frau Mann Bruder Schwester Enkel Enkelin Familie Freund Freunde Besuch heute morgen gestern jetzt später gleich schnell langsam mehr weniger zu viel genug warm kalt heiß müde schlecht gut besser schlimm traurig glücklich froh wütend Angst Sorge Kopf Arm Arme Hand Hände Bein Beine Fuß Füße Rücken Bauch Brust Herz Hals Auge Augen Ohr Ohren Mund Zähne Nase möchte möchten will wollen kann können muss müssen habe haben bin sind ist war brauche brauchen mag mögen liebe lieben verstehe verstanden weiß wissen Bitte kommen komm gehen geh bleiben bleib warten warte helfen hilf holen hole geben gib nehmen nimm öffnen schließen machen mach lauter leiser aus an auf zu raus rein hin her hier dort draußen drinnen links rechts oben unten vorne hinten Garten Spaziergang Auto Zimmer Küche Bad Wohnzimmer Schlafzimmer Tisch Decke Kissen Jacke Schuhe Socken Hose Hemd Zeitung Buch Musik Spiel Foto Bild Wetter Sonne Regen Wind Zeit Uhr Tag Nacht Woche Monat Jahr Ordnung Problem Frage Antwort Name Zuhause Krankenhaus Therapie Übung Training Sprechen Schreiben Lesen Schlafen Ausruhen Aufstehen Hinlegen Hinsetzen Umdrehen Waschen Duschen Rasieren Anziehen Ausziehen Dank Liebe Gruß Grüße Gute Nacht Morgen Abend Mittag Mittagessen Abendessen Frühstück Kuchen Obst Apfel Banane Fleisch Fisch Kartoffeln Gemüse Salat Eis Bier Wein Zucker Salz".split(" ");
+const DEF0=()=>({cats:[
+{id:"c0",e:"⭐",n:"Meine",p:[{e:"👋",t:"Hallo, ich bin da."},{e:"🙂",t:"Mir geht es gut."},{e:"❤️",t:"Ich habe dich lieb."},{e:"🏠",t:"Ich möchte nach Hause."}]},
+{id:"c1",e:"🙋",n:"Grundbedürfnisse",p:[{e:"🚽",t:"Ich muss zur Toilette."},{e:"💧",t:"Ich habe Durst."},{e:"🍽️",t:"Ich habe Hunger."},{e:"🛏️",t:"Ich möchte mich hinlegen."},{e:"🪑",t:"Ich möchte mich hinsetzen."},{e:"🥱",t:"Ich bin müde."},{e:"🌡️",t:"Mir ist kalt."},{e:"🔥",t:"Mir ist zu warm."}]},
+{id:"c2",e:"🤕",n:"Schmerzen",p:[{e:"😣",t:"Ich habe Schmerzen."},{e:"🧠",t:"Mein Kopf tut weh."},{e:"🫀",t:"Meine Brust tut weh."},{e:"🤢",t:"Mir ist schlecht."},{e:"😵",t:"Mir ist schwindelig."},{e:"💪",t:"Mein Arm tut weh."},{e:"🦵",t:"Mein Bein tut weh."},{e:"🚨",t:"Bitte rufen Sie einen Arzt."}]},
+{id:"c3",e:"💊",n:"Pflege & Hilfe",p:[{e:"🆘",t:"Ich brauche Hilfe."},{e:"💊",t:"Ich brauche meine Tabletten."},{e:"🔄",t:"Bitte dreh mich um."},{e:"⬆️",t:"Bitte hilf mir beim Aufstehen."},{e:"🚿",t:"Ich möchte mich waschen."},{e:"👕",t:"Ich möchte mich umziehen."},{e:"🧴",t:"Bitte ein bisschen langsamer."},{e:"🔁",t:"Bitte noch einmal."}]},
+{id:"c4",e:"🍎",n:"Essen & Trinken",p:[{e:"☕",t:"Ich möchte einen Kaffee."},{e:"🍵",t:"Ich möchte einen Tee."},{e:"🥛",t:"Ich möchte ein Glas Wasser."},{e:"🍞",t:"Ich möchte ein Brot."},{e:"🍲",t:"Das schmeckt gut."},{e:"😋",t:"Ich habe genug."},{e:"🍰",t:"Ich möchte etwas Süßes."},{e:"🍺",t:"Ich möchte ein Bier."}]},
+{id:"c5",e:"😊",n:"Gefühle",p:[{e:"😊",t:"Ich bin glücklich."},{e:"😢",t:"Ich bin traurig."},{e:"😠",t:"Ich bin wütend."},{e:"😰",t:"Ich habe Angst."},{e:"😤",t:"Ich bin ungeduldig."},{e:"🥰",t:"Ich freue mich, dass du da bist."},{e:"🤗",t:"Bitte nimm mich in den Arm."},{e:"🙏",t:"Danke für alles."}]},
+{id:"c6",e:"👨‍👩‍👧",n:"Familie & Besuch",p:[{e:"👋",t:"Schön, dass du da bist."},{e:"🪑",t:"Bleib noch ein bisschen."},{e:"❓",t:"Wie geht es euch?"},{e:"📞",t:"Ich möchte telefonieren."},{e:"📷",t:"Zeig mir bitte Fotos."},{e:"👶",t:"Wie geht es den Kindern?"},{e:"🚪",t:"Ich möchte jetzt allein sein."},{e:"👋",t:"Bis bald, kommt bald wieder."}]},
+{id:"c7",e:"🎭",n:"Alltag",p:[{e:"📺",t:"Mach bitte den Fernseher an."},{e:"🔇",t:"Mach bitte den Fernseher aus."},{e:"🔊",t:"Bitte lauter."},{e:"🔉",t:"Bitte leiser."},{e:"🌳",t:"Ich möchte nach draußen."},{e:"🎵",t:"Spiel bitte Musik."},{e:"📰",t:"Lies mir bitte etwas vor."},{e:"💡",t:"Mach bitte das Licht an."}]},
+{id:"c8",e:"💬",n:"Gespräch",p:[{e:"👍",t:"Ja."},{e:"👎",t:"Nein."},{e:"🙏",t:"Bitte."},{e:"🙏",t:"Danke."},{e:"🤷",t:"Ich weiß nicht."},{e:"✅",t:"Ich habe dich verstanden."},{e:"⏳",t:"Moment bitte, ich muss nachdenken."},{e:"😀",t:"Guten Morgen."},{e:"🌙",t:"Gute Nacht."}]}
+],set:{voice:"",pitch:.8,rate:.85,vol:1,theme:""},learn:{},sel:"c0"});
+const NEWC=[
+{id:"c1",e:"🙋",n:"Grundbedürfnisse",p:[{e:"🚽",t:"Ich muss mal aufs Klo."},{e:"💧",t:"Ich hab Durst."},{e:"🍽️",t:"Ich hab Hunger."},{e:"🛏️",t:"Ich würde mich gern hinlegen."},{e:"🪑",t:"Ich würde mich gern hinsetzen."},{e:"🥱",t:"Ich bin ziemlich müde."},{e:"🧥",t:"Mir ist kalt."},{e:"🥵",t:"Mir ist zu warm."},{e:"🤫",t:"Ich brauch mal kurz meine Ruhe."}]},
+{id:"c2",e:"🤕",n:"Schmerzen",p:[{e:"😣",t:"Das tut weh."},{e:"😕",t:"Mir geht’s nicht so gut."},{e:"🧠",t:"Mein Kopf brummt."},{e:"🫀",t:"Es drückt mir auf der Brust."},{e:"🤢",t:"Mir ist flau im Magen."},{e:"😵",t:"Mir ist schwindelig."},{e:"💪",t:"Mein Arm tut weh."},{e:"🦵",t:"Mein Bein tut weh."},{e:"🚨",t:"Ich glaub, wir sollten den Arzt holen."}]},
+{id:"c3",e:"💊",n:"Pflege & Hilfe",p:[{e:"🆘",t:"Kannst du mir mal helfen?"},{e:"💊",t:"Ist es Zeit für meine Tabletten?"},{e:"🔄",t:"Kannst du mich bitte umdrehen?"},{e:"⬆️",t:"Hilf mir mal beim Aufstehen."},{e:"🚿",t:"Ich würde mich gern frisch machen."},{e:"👕",t:"Ich möchte mich umziehen."},{e:"🐢",t:"Nicht so schnell, bitte."},{e:"🔁",t:"Sag das bitte nochmal."}]},
+{id:"c4",e:"🍎",n:"Essen & Trinken",p:[{e:"☕",t:"Ein Kaffee wär jetzt schön."},{e:"🍵",t:"Ich nehm gern einen Tee."},{e:"🥛",t:"Gibst du mir mal ein Glas Wasser?"},{e:"🍞",t:"Ich hätte gern ein Butterbrot."},{e:"😋",t:"Das schmeckt richtig gut."},{e:"✋",t:"Danke, es reicht mir."},{e:"🍰",t:"Ich hätte Lust auf was Süßes."},{e:"🍺",t:"Ein Bierchen wär nicht schlecht."}]},
+{id:"c5",e:"😊",n:"Gefühle",p:[{e:"😊",t:"Mir geht’s gut heute."},{e:"😢",t:"Mir ist heute nicht nach Lachen."},{e:"😠",t:"Das nervt mich."},{e:"😰",t:"Ich mach mir Sorgen."},{e:"😤",t:"Es dauert mir zu lang."},{e:"🥰",t:"Ich freu mich, dass du da bist."},{e:"🤗",t:"Komm, nimm mich mal in den Arm."},{e:"🙏",t:"Danke, dass du dich kümmerst."}]},
+{id:"c6",e:"👨‍👩‍👧",n:"Familie & Besuch",p:[{e:"👋",t:"Schön, dass du da bist!"},{e:"🪑",t:"Bleib doch noch ein bisschen."},{e:"❓",t:"Na, wie geht’s euch?"},{e:"📞",t:"Können wir mal telefonieren?"},{e:"📷",t:"Zeig mir doch mal Fotos."},{e:"👶",t:"Was machen eigentlich die Kinder?"},{e:"🤫",t:"Ich bräuchte jetzt etwas Ruhe."},{e:"👋",t:"Kommt bald wieder, ja?"}]},
+{id:"c7",e:"🎭",n:"Alltag",p:[{e:"📺",t:"Mach doch mal den Fernseher an."},{e:"🔇",t:"Mach den Fernseher bitte aus."},{e:"🔊",t:"Kannst du es bitte lauter machen?"},{e:"🔉",t:"Bitte ein bisschen leiser."},{e:"🌳",t:"Lass uns mal an die frische Luft."},{e:"🎵",t:"Mach doch mal etwas Musik an."},{e:"📰",t:"Les mir doch mal was vor."},{e:"💡",t:"Mach bitte mal das Licht an."}]},
+{id:"c8",e:"💬",n:"Gespräch",p:[{e:"👍",t:"Ja, genau."},{e:"👎",t:"Nein, lieber nicht."},{e:"🙏",t:"Bitte schön."},{e:"😊",t:"Danke dir!"},{e:"🤷",t:"Keine Ahnung."},{e:"✅",t:"Ja, ich hab’s verstanden."},{e:"⏳",t:"Warte mal kurz, ich überleg."},{e:"🖐️",t:"Moment, ich wollte noch was sagen."},{e:"☀️",t:"Guten Morgen, na?"},{e:"🌙",t:"Gute Nacht, schlaf gut."}]}
+];
+const DEF=()=>{const d=DEF0();d.v=2;d.cats=[d.cats[0],...JSON.parse(JSON.stringify(NEWC))];return d};
+let S;try{S=JSON.parse(localStorage.getItem("sprachhilfe")||"null")}catch(e){}
+if(!S||!S.cats)S=DEF();
+else if(S.v!==2){const n=DEF();S.cats=[...S.cats.filter(c=>c.id==="c0"),...n.cats.slice(1),...S.cats.filter(c=>!/^c[0-8]$/.test(c.id))];S.v=2;try{localStorage.setItem("sprachhilfe",JSON.stringify(S))}catch(e){}}
+var modelDirty=true;const save=()=>{modelDirty=true;try{localStorage.setItem("sprachhilfe",JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+let edit=false,voices=[];
+const uid=()=>"i"+Math.random().toString(36).slice(2,9);
+function applyTheme(){if(S.set.theme)document.documentElement.dataset.theme=S.set.theme;else delete document.documentElement.dataset.theme}
+
+/* Sprache */
+function loadVoices(){voices=(speechSynthesis.getVoices()||[]).filter(v=>/^de/i.test(v.lang))}
+if("speechSynthesis" in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
+const MALE=/stefan|conrad|markus|hans|martin|daniel|yannick|jonas|male|männlich|florian|klaus|bernd|killian/i;
+function pickVoice(){let v=voices.find(x=>x.name===S.set.voice);if(v)return v;
+ return voices.find(x=>MALE.test(x.name))||voices.find(x=>/de-DE/i.test(x.lang))||voices[0]}
+function speak(t,btn){t=(t||"").trim();if(!t||!("speechSynthesis" in window))return;
+ speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="de-DE";const v=pickVoice();if(v){u.voice=v;u.lang=v.lang}
+ u.pitch=S.set.pitch;u.rate=S.set.rate;u.volume=S.set.vol;
+ if(btn){btn.classList.add("talk");u.onend=u.onerror=()=>btn.classList.remove("talk")}
+ speechSynthesis.speak(u)}
+
+/* Rendering */
+function cur(){return S.cats.find(c=>c.id===S.sel)||S.cats[0]}
+function render(){
+ document.body.classList.toggle("edit",edit);
+ $("bEdit").classList.toggle("on",edit);$("bEdit").setAttribute("aria-pressed",edit);
+ $("bEdit").textContent=edit?"✅ Fertig":"✏️ Bearbeiten";
+ const cats=$("cats");cats.innerHTML="";
+ S.cats.forEach(c=>{const b=document.createElement("button");b.className="cat"+(c.id===cur().id?" sel":"");
+  b.innerHTML="<span></span>"+"<div></div>";b.firstChild.textContent=c.e||"";b.lastChild.textContent=c.n;
+  b.onclick=()=>{if(edit&&c.id===cur().id)return editCat(c);S.sel=c.id;save();render();if(edit)editCat(c)};
+  cats.appendChild(b)});
+ const a=document.createElement("button");a.className="cat add";a.textContent="＋";a.setAttribute("aria-label","Kategorie hinzufügen");a.onclick=()=>editCat(null);cats.appendChild(a);
+ const ph=$("phr");ph.innerHTML="";
+ cur().p.forEach(p=>{const b=document.createElement("button");b.className="p";
+  b.innerHTML="<span></span><div></div>";b.firstChild.textContent=p.e||"";b.lastChild.textContent=p.t;
+  b.onclick=()=>edit?editPhrase(p):speak(p.t,b);ph.appendChild(b)});
+ const a2=document.createElement("button");a2.className="p add";a2.textContent="＋";a2.setAttribute("aria-label","Satz hinzufügen");a2.onclick=()=>editPhrase(null);ph.appendChild(a2);
+ suggest()}
+
+/* Vorhersage: kleines Sprachmodell, läuft komplett auf dem Tablet */
+const GEN="Ich möchte gern etwas trinken.|Ich möchte nach Hause.|Ich möchte jetzt schlafen.|Ich möchte gern aufstehen.|Ich möchte mit dir reden.|Ich möchte noch ein bisschen bleiben.|Ich habe Schmerzen im Rücken.|Ich habe Schmerzen im Bein.|Ich habe Kopfschmerzen.|Ich habe keinen Hunger.|Ich habe Durst, kannst du mir etwas Wasser geben?|Ich habe dich lieb.|Ich brauche etwas zu trinken.|Ich brauche meine Brille.|Ich brauche frische Luft.|Ich brauche bitte Hilfe.|Ich brauche eine Decke.|Ich bin müde und möchte schlafen.|Ich bin froh, dass du hier bist.|Ich bin heute gut drauf.|Ich bin traurig.|Ich weiß es nicht.|Ich verstehe dich gut.|Ich kann nicht sprechen, aber ich verstehe alles.|Ich kann das nicht allein.|Ich will nicht mehr liegen.|Ich will etwas essen.|Ich will fernsehen.|Ich will spazieren gehen.|Kannst du mir bitte helfen?|Kannst du mir bitte etwas zu trinken bringen?|Kannst du bitte das Fenster öffnen?|Kannst du bitte das Fenster schließen?|Kannst du bitte das Licht ausmachen?|Kannst du mir bitte die Decke geben?|Kannst du mir bitte das Telefon bringen?|Kannst du bitte die Tür zumachen?|Kannst du bitte kurz warten?|Kannst du mich bitte anrufen?|Kannst du morgen wiederkommen?|Kommst du morgen wieder?|Kommst du heute Abend noch vorbei?|Wie geht es dir?|Wie spät ist es?|Wann kommst du wieder?|Wann gibt es Essen?|Wann kommt der Arzt?|Wo ist meine Brille?|Wo ist mein Handy?|Wo sind die anderen?|Was gibt es heute zu essen?|Was machst du heute?|Was ist los?|Was meinst du dazu?|Gibst du mir bitte ein Glas Wasser?|Gibst du mir bitte meine Tabletten?|Gibst du mir bitte die Fernbedienung?|Bitte mach den Fernseher an.|Bitte mach das Licht an.|Bitte bring mir etwas zu trinken.|Bitte bleib noch ein bisschen.|Bitte hilf mir beim Aufstehen.|Bitte komm bald wieder.|Bitte sprich ein bisschen langsamer.|Danke, das ist lieb von dir.|Danke für deine Hilfe.|Danke, dass du da bist.|Mir ist kalt.|Mir ist warm.|Mir ist schlecht.|Mir ist schwindelig.|Mir geht es heute gut.|Mir geht es nicht gut.|Mir tut der Rücken weh.|Mir tut der Kopf weh.|Mir tut das Bein weh.|Mir tut der Arm weh.|Das tut weh.|Das schmeckt gut.|Das ist schön.|Das ist gut so.|Das ist zu laut.|Das ist zu heiß.|Das ist mir zu kalt.|Das war ein schöner Tag.|Das möchte ich nicht.|Das weiß ich nicht mehr.|Es geht mir besser.|Es ist alles in Ordnung.|Es ist mir zu warm.|Es ist mir zu laut.|Es tut mir leid.|Es freut mich, dass du da bist.|Schön, dass du da bist.|Schön, dich zu sehen.|Gute Nacht, schlaf gut.|Guten Morgen, wie hast du geschlafen?|Guten Tag, wie geht es dir?|Hallo, schön dich zu sehen.|Hallo, ich bin da.|Magst du mir etwas vorlesen?|Magst du mit mir spazieren gehen?|Lass uns bitte rausgehen.|Lass uns etwas Musik hören.|Lass uns bitte Fotos anschauen.|Wir können später reden.|Wir sollten den Arzt anrufen.|Ja, das stimmt.|Nein, das stimmt nicht.|Nein danke, ich möchte nichts mehr.".split("|");
+let M=null;const PU=/^[.,!?]$/;
+const tok=s=>s.match(/[\p{L}\d’'-]+|[.,!?]/gu)||[];
+function build(){
+ const tri={},bi={},mid={};W.forEach(w=>{mid[w.toLowerCase()]=w});
+ const inc=(o,k,n,w)=>{const d=o[k]||(o[k]={});d[n]=(d[n]||0)+w};
+ const add=(s,wt)=>{let c1="<s>",c2="<s>";
+  tok(s).forEach(w=>{const l=w.toLowerCase();
+   if(!PU.test(w)){if(c2!=="<s>")mid[l]=w;else if(!mid[l])mid[l]=l}
+   inc(tri,c1+" "+c2,l,wt);inc(bi,c2,l,wt);
+   if(/^[.!?]$/.test(w)){c1=c2="<s>"}else{c1=c2;c2=l}});
+  if(c2!=="<s>"){inc(tri,c1+" "+c2,".",wt);inc(bi,c2,".",wt)}};
+ GEN.forEach(s=>add(s,1));S.cats.forEach(c=>c.p.forEach(p=>add(p.t,2)));(S.hist||[]).forEach(s=>add(s,3));
+ return {tri,bi,mid}}
+const model=()=>{if(modelDirty||!M){M=build();modelDirty=false}return M};
+function nexts(c1,c2){const m=model(),sc={},a=m.tri[c1+" "+c2],b=m.bi[c2];
+ if(a)for(const k in a)sc[k]=(sc[k]||0)+a[k]*3;
+ if(b)for(const k in b)sc[k]=(sc[k]||0)+b[k];
+ return Object.entries(sc).sort((x,y)=>y[1]-x[1])}
+function ctxOf(v){const t=tok(v);let raw="";
+ if(t.length&&!/\s$/.test(v)&&!PU.test(t[t.length-1]))raw=t.pop();
+ let c1="<s>",c2="<s>";t.forEach(w=>{const l=w.toLowerCase();if(/^[.!?]$/.test(w)){c1=c2="<s>"}else{c1=c2;c2=l}});
+ return {c1,c2,raw,p:raw.toLowerCase()}}
+const fm=(l,first)=>{const s=model().mid[l]||l;return first?s[0].toUpperCase()+s.slice(1):s};
+function predictWords(v){const x=ctxOf(v);
+ return nexts(x.c1,x.c2).filter(([w])=>!PU.test(w)&&w.startsWith(x.p)&&w!==x.p).slice(0,8).map(([w])=>fm(w,x.c2==="<s>"))}
+function predictSentences(v){const x=ctxOf(v),res=[],seen=new Set([v.trim().toLowerCase()]);
+ const base=v.slice(0,v.length-x.raw.length);
+ for(const [w0] of nexts(x.c1,x.c2).filter(([w])=>!PU.test(w)&&w.startsWith(x.p)).slice(0,6)){
+  const ws=[fm(w0,x.c2==="<s>")];let x1=x.c2,x2=w0,end="",n=0;const sp=new Set();
+  while(n++<12){const nx=nexts(x1,x2)[0];if(!nx)break;const w=nx[0];
+   if(/^[.!?]$/.test(w)){end=w;break}
+   const k=x1+" "+x2;if(sp.has(k))break;sp.add(k);
+   ws.push(PU.test(w)?w:fm(w,false));x1=x2;x2=w}
+  if(!end)continue;
+  const tail=ws.join(" ").replace(/ ,/g,",")+end;
+  const full=base+(base&&!/\s$/.test(base)?" ":"")+tail;
+  if(seen.has(full.toLowerCase()))continue;seen.add(full.toLowerCase());
+  res.push({t:full,ph:1,d:tail});if(res.length>=3)break}
+ return res}
+
+/* Schreibhilfe */
+function suggest(){
+ const box=$("sug");box.innerHTML="";const v=$("txt").value;
+ const m=v.match(/(\S*)$/);const word=m?m[1]:"";const lw=word.toLowerCase();
+ let out=[];
+ if(v.trim().length>=2){const lv=v.trim().toLowerCase();
+  const seen=new Set();S.cats.forEach(c=>c.p.forEach(p=>{const l=p.t.toLowerCase();if(l!==lv&&l.startsWith(lv)&&!seen.has(l)){seen.add(l);out.push({t:p.t,ph:1})}}));out=out.slice(0,2);predictSentences(v).forEach(s=>{if(!out.some(o=>o.t.toLowerCase()===s.t.toLowerCase()))out.push(s)})}
+ if(v.trim()){const ws=new Map();predictWords(v).forEach(w=>ws.set(w.toLowerCase(),w));
+  Object.entries(S.learn).sort((a,b)=>b[1]-a[1]).forEach(([w])=>{if(lw&&w.toLowerCase().startsWith(lw)&&w.toLowerCase()!==lw)ws.set(w.toLowerCase(),w)});
+  W.forEach(w=>{if(lw&&w.toLowerCase().startsWith(lw)&&w.toLowerCase()!==lw&&!ws.has(w.toLowerCase()))ws.set(w.toLowerCase(),w)});
+  [...ws.values()].slice(0,8).forEach(w=>out.push({t:w}))}
+ else if(!v.trim()){const top=Object.entries(S.learn).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  ["Ich","Bitte","Danke","Ja","Nein"].forEach(w=>out.push({t:w}));top.forEach(([w])=>{if(!out.some(o=>o.t===w))out.push({t:w})})}
+ out.forEach(o=>{const b=document.createElement("button");b.className="chip"+(o.ph?" ph":"");b.textContent=o.d||o.t;
+  b.onclick=()=>{const t=$("txt");if(o.ph)t.value=o.t;else t.value=v.slice(0,v.length-word.length)+((!word&&v&&!/\s$/.test(v))?" ":"")+o.t+" ";t.focus();suggest()};box.appendChild(b)})}
+function learn(t){S.hist=S.hist||[];const ts=t.trim();S.hist=S.hist.filter(x=>x!==ts);S.hist.push(ts);S.hist=S.hist.slice(-200);t.split(/[\s.,!?;:]+/).filter(w=>w.length>2).forEach(w=>{const k=S.learn[w]!==undefined?w:(S.learn[w.toLowerCase()]!==undefined?w.toLowerCase():w);S.learn[k]=(S.learn[k]||0)+1});save()}
+$("txt").oninput=suggest;
+$("say").onclick=()=>{const t=$("txt").value;if(!t.trim())return;learn(t);speak(t,$("say"));suggest()};
+$("clr").onclick=()=>{$("txt").value="";$("txt").focus();suggest()};
+$("keep").onclick=()=>{const t=$("txt").value.trim();if(!t)return;S.sel=S.cats[0].id;S.cats[0].p.push({e:"💬",t});save();render();$("phr").scrollLeft=1e6;
+ const b=$("keep");const o=b.textContent;b.textContent="✅ Gemerkt";setTimeout(()=>b.textContent=o,1300)};
+$("bEdit").onclick=()=>{edit=!edit;render()};
+
+/* Editor */
+const close=id=>$(id).classList.remove("show");
+function move(arr,i,d){const j=i+d;if(j<0||j>=arr.length)return;[arr[i],arr[j]]=[arr[j],arr[i]]}
+function dialog(title,item,isCat,list,onSave){
+ const box=$("boxE");const i=item?list.indexOf(item):-1;
+ box.innerHTML=`<h2></h2><div class="er"><input id="fe" maxlength="8" aria-label="Emoji" placeholder="😀"><input id="ft" aria-label="${isCat?"Name":"Satz"}" placeholder="${isCat?"Name der Kategorie":"Satz, der gesprochen wird"}"></div>
+ <div class="btns"><button class="pri" id="ok">✅ Speichern</button>${item?'<button id="l">◀ Nach links</button><button id="r">Nach rechts ▶</button><button class="del" id="d">🗑 Löschen</button>':""}<button id="no">Abbrechen</button></div>`;
+ box.querySelector("h2").textContent=title;
+ $("fe").value=item?item.e:"";$("ft").value=item?(isCat?item.n:item.t):"";
+ $("ok").onclick=()=>{const t=$("ft").value.trim();if(!t){$("ft").focus();return}onSave($("fe").value.trim(),t);save();close("ovE");render()};
+ $("no").onclick=()=>close("ovE");
+ if(item){$("l").onclick=()=>{move(list,i,-1);save();close("ovE");render()};$("r").onclick=()=>{move(list,i,1);save();close("ovE");render()};
+  $("d").onclick=()=>{if(isCat&&list.length<2){alert("Mindestens eine Kategorie muss bleiben.");return}
+   if(!confirm("Wirklich löschen?"))return;list.splice(i,1);if(isCat&&!list.some(c=>c.id===S.sel))S.sel=list[0].id;save();close("ovE");render()}}
+ $("ovE").classList.add("show");setTimeout(()=>$("ft").focus(),50)}
+function editCat(c){dialog(c?"Kategorie bearbeiten":"Neue Kategorie",c,true,S.cats,(e,t)=>{if(c){c.e=e;c.n=t}else{const n={id:uid(),e:e||"📁",n:t,p:[]};S.cats.push(n);S.sel=n.id}})}
+function editPhrase(p){const l=cur().p;dialog(p?"Satz bearbeiten":"Neuer Satz",p,false,l,(e,t)=>{if(p){p.e=e;p.t=t}else l.push({e:e||"💬",t})})}
+
+/* Einstellungen */
+$("bSet").onclick=()=>{loadVoices();const s=S.set;const box=$("boxS");
+ const opts=voices.map(v=>`<option value="${v.name}"${v.name===(pickVoice()||{}).name?" selected":""}>${v.name} (${v.lang})</option>`).join("")||'<option value="">Keine deutsche Stimme gefunden</option>';
+ box.innerHTML=`<h2>Einstellungen</h2>
+ <label>Stimme<select id="sv">${opts}</select></label>
+ <label>Tonhöhe (tiefer = männlicher)<input type="range" id="sp" min="0.4" max="1.5" step="0.05" value="${s.pitch}"></label>
+ <label>Geschwindigkeit<input type="range" id="sr" min="0.5" max="1.4" step="0.05" value="${s.rate}"></label>
+ <label>Lautstärke<input type="range" id="sl" min="0.2" max="1" step="0.1" value="${s.vol}"></label>
+ <label>Darstellung<select id="st"><option value="">Automatisch</option><option value="light">Hell</option><option value="dark">Dunkel</option></select></label>
+ <div class="btns"><button class="pri" id="tst">🔊 Stimme testen</button><button id="rst" class="del">Alles zurücksetzen</button><button id="cl">Schließen</button></div>`;
+ $("st").value=s.theme||"";
+ const upd=()=>{s.voice=$("sv").value;s.pitch=+$("sp").value;s.rate=+$("sr").value;s.vol=+$("sl").value;s.theme=$("st").value;applyTheme();save()};
+ ["sv","sp","sr","sl","st"].forEach(i=>$(i).onchange=upd);
+ $("tst").onclick=()=>{upd();speak("Hallo, so klingt meine Stimme.")};
+ $("cl").onclick=()=>{upd();close("ovS")};
+ $("rst").onclick=()=>{if(confirm("Alle Kategorien, Sätze und Einstellungen auf den Anfang zurücksetzen?")){S=DEF();save();applyTheme();close("ovS");render()}};
+ $("ovS").classList.add("show")};
+document.querySelectorAll(".ov").forEach(o=>o.addEventListener("click",e=>{if(e.target===o)o.classList.remove("show")}));
+/* Gedrückt halten und verschieben */
+function sortable(row,sel,getList){
+ let swallow=false,dragging=false;
+ row.addEventListener("click",e=>{if(swallow){e.stopPropagation();e.preventDefault()}},true);
+ row.addEventListener("contextmenu",e=>e.preventDefault());
+ row.addEventListener("touchmove",e=>{if(dragging)e.preventDefault()},{passive:false});
+ row.addEventListener("pointerdown",e=>{
+  const el=e.target.closest(sel);if(!el||el.classList.contains("add")||(e.pointerType==="mouse"&&e.button!==0))return;
+  const items=()=>[...row.querySelectorAll(sel+":not(.add)")];
+  const sx=e.clientX,sy=e.clientY;let curX=sx,grab=0,orig,origEls,timer,raf;
+  const place=()=>{
+   const rr=row.getBoundingClientRect();
+   if(curX<rr.left+70)row.scrollLeft-=14;else if(curX>rr.right-70)row.scrollLeft+=14;
+   el.style.transform="";let r=el.getBoundingClientRect();
+   const cx=curX-grab+r.width/2;let before=null;
+   for(const i of items()){if(i===el)continue;const b=i.getBoundingClientRect();if(cx<b.left+b.width/2){before=i;break}}
+   const target=before||row.querySelector(".add");
+   if(el.nextElementSibling!==target){row.insertBefore(el,target);r=el.getBoundingClientRect()}
+   el.style.transform="translateX("+(curX-grab-r.left)+"px) scale(1.05)"};
+  const loop=()=>{place();raf=requestAnimationFrame(loop)};
+  const mv=ev=>{curX=ev.clientX;if(!dragging&&Math.hypot(ev.clientX-sx,ev.clientY-sy)>12){clearTimeout(timer);cleanup()}};
+  const end=()=>{clearTimeout(timer);
+   if(dragging){cancelAnimationFrame(raf);
+    const order=items().map(i=>origEls.indexOf(i));const list=getList();
+    list.splice(0,list.length,...order.map(k=>orig[k]));save();
+    dragging=false;swallow=true;setTimeout(()=>swallow=false,80);render()}
+   cleanup()};
+  function cleanup(){document.removeEventListener("pointermove",mv);document.removeEventListener("pointerup",end);document.removeEventListener("pointercancel",end)}
+  document.addEventListener("pointermove",mv);document.addEventListener("pointerup",end);document.addEventListener("pointercancel",end);
+  timer=setTimeout(()=>{
+   dragging=true;origEls=items();orig=getList().slice();
+   grab=sx-el.getBoundingClientRect().left;el.classList.add("lift");
+   if(navigator.vibrate)navigator.vibrate(40);
+   document.removeEventListener("pointermove",mv);
+   document.addEventListener("pointermove",ev=>{curX=ev.clientX});
+   loop()},550)})}
+sortable($("cats"),".cat",()=>S.cats);
+sortable($("phr"),".p",()=>cur().p);
+applyTheme();render();
+</script>
+</body>
+</html>
